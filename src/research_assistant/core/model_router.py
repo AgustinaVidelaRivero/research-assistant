@@ -11,9 +11,9 @@ from research_assistant.core.state import ModelCallRecord, TaskComplexity
 
 # Precio en USD por 1 millón de tokens (input, output). los hardcodeo para ahora, pero se podrían ajustar segun el pricing real de Azure OpenAI.
 PRICING_PER_1M_TOKENS: dict[TaskComplexity, tuple[float, float]] = {
-    TaskComplexity.SIMPLE: (0.15, 0.60),  # gpt-4o-mini approx
-    TaskComplexity.MEDIUM: (2.50, 10.00),  # gpt-4o approx
-    TaskComplexity.COMPLEX: (2.50, 10.00),  # gpt-4o approx (mismo por ahora)
+    TaskComplexity.SIMPLE: (0.40, 1.60),  # gpt-4.1-mini
+    TaskComplexity.MEDIUM: (2.00, 8.00),  # gpt-4.1
+    TaskComplexity.COMPLEX: (2.00, 8.00),  # gpt-4.1
 }
 
 

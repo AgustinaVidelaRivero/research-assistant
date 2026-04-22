@@ -45,3 +45,10 @@ select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: marks tests that require live Azure credentials",
+]
+filterwarnings = [
+    "ignore::UserWarning:pydantic.main",
+]

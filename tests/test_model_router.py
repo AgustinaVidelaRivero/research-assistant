@@ -48,8 +48,9 @@ def test_settings_loads_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
     assert s.deployment_complex == "c"
 
     monkeypatch.delenv("AZURE_OPENAI_API_KEY", raising=False)
+    # Do not read project `.env` here, or a local file would still supply the key.
     with pytest.raises(ValidationError):
-        AzureOpenAISettings()
+        AzureOpenAISettings(_env_file=None)
 
 
 def test_endpoint_must_end_with_slash() -> None:
@@ -84,7 +85,7 @@ def test_estimate_cost() -> None:
     pin, pout = PRICING_PER_1M_TOKENS[TaskComplexity.SIMPLE]
     expected = (input_tok * pin + output_tok * pout) / 1_000_000
     assert r.estimate_cost(TaskComplexity.SIMPLE, input_tok, output_tok) == pytest.approx(
-        0.00045
+        expected
     )
 
 
