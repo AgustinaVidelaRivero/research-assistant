@@ -1,0 +1,48 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment and secrets
+.env
+.env.local
+
+# Test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# mypy
+.dmypy.json
+dmypy.json
+
+# uv: lockfile is committed; do not ignore uv.lock
