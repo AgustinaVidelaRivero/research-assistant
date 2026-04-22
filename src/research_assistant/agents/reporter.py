@@ -78,7 +78,7 @@ def reporter_node(state: GraphState) -> dict[str, Any]:
     if state.curated_content is None:
         return {
             "stage": WorkflowStage.FAILED,
-            "errors": list(state.errors) + ["Reporter: missing curated content"],
+            "errors": ["Reporter: missing curated content"],
         }
     try:
         briefing = _curated_briefing(state)
@@ -113,14 +113,14 @@ def reporter_node(state: GraphState) -> dict[str, Any]:
             pe = out.get("parsing_error") if isinstance(out, dict) else "unknown"
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + [f"Reporter parse failed: {pe!r}"],
+                "errors": [f"Reporter parse failed: {pe!r}"],
             }
         parsed = out.get("parsed")
         raw = out.get("raw")
         if parsed is None:
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + ["Reporter: missing parsed structured output"],
+                "errors": ["Reporter: missing parsed structured output"],
             }
 
         section_models = sorted(parsed.sections, key=lambda s: (s.order, s.heading))
@@ -144,10 +144,10 @@ def reporter_node(state: GraphState) -> dict[str, Any]:
         return {
             "stage": WorkflowStage.COMPLETED,
             "final_report": final_report,
-            "model_calls": list(state.model_calls) + [record],
+            "model_calls": [record],
         }
     except Exception as e:  # noqa: BLE001
         return {
             "stage": WorkflowStage.FAILED,
-            "errors": list(state.errors) + [f"Reporter failed: {e!s}"],
+            "errors": [f"Reporter failed: {e!s}"],
         }

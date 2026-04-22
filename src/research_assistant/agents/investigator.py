@@ -64,14 +64,14 @@ def investigator_node(state: GraphState) -> dict[str, Any]:
             pe = out.get("parsing_error") if isinstance(out, dict) else "unknown"
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + [f"Investigator parse failed: {pe!r}"],
+                "errors": [f"Investigator parse failed: {pe!r}"],
             }
         parsed = out.get("parsed")
         raw = out.get("raw")
         if parsed is None:
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + ["Investigator: missing parsed structured output"],
+                "errors": ["Investigator: missing parsed structured output"],
             }
 
         real_subs: list[Subtopic] = []
@@ -99,10 +99,10 @@ def investigator_node(state: GraphState) -> dict[str, Any]:
         return {
             "stage": WorkflowStage.AWAITING_HUMAN,
             "findings": findings,
-            "model_calls": list(state.model_calls) + [record],
+            "model_calls": [record],
         }
     except Exception as e:  # noqa: BLE001
         return {
             "stage": WorkflowStage.FAILED,
-            "errors": list(state.errors) + [f"Investigator failed: {e!s}"],
+            "errors": [f"Investigator failed: {e!s}"],
         }

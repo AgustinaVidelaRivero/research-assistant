@@ -73,7 +73,7 @@ def curator_node(state: GraphState) -> dict[str, Any]:
     if not validated:
         return {
             "stage": WorkflowStage.FAILED,
-            "errors": list(state.errors) + ["No approved subtopics to curate"],
+            "errors": ["No approved subtopics to curate"],
         }
 
     try:
@@ -81,7 +81,7 @@ def curator_node(state: GraphState) -> dict[str, Any]:
         if not subtopics_text.strip():
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + ["No approved subtopics to curate"],
+                "errors": ["No approved subtopics to curate"],
             }
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -113,17 +113,17 @@ def curator_node(state: GraphState) -> dict[str, Any]:
             pe = out.get("parsing_error") if isinstance(out, dict) else "unknown"
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + [f"Curator parse failed: {pe!r}"],
+                "errors": [f"Curator parse failed: {pe!r}"],
             }
         parsed = out.get("parsed")
         raw = out.get("raw")
         if parsed is None:
             return {
                 "stage": WorkflowStage.FAILED,
-                "errors": list(state.errors) + ["Curator: missing parsed structured output"],
+                "errors": ["Curator: missing parsed structured output"],
             }
 
-        errors_extra: list[str] = list(state.errors)
+        errors_extra: list[str] = []
         analyses: list[_SubtopicAnalysis] = list(parsed.analyses)
         n = len(validated)
         if len(analyses) < n:
@@ -175,11 +175,11 @@ def curator_node(state: GraphState) -> dict[str, Any]:
         return {
             "stage": WorkflowStage.REPORTING,
             "curated_content": content,
-            "model_calls": list(state.model_calls) + [record],
+            "model_calls": [record],
             "errors": errors_extra,
         }
     except Exception as e:  # noqa: BLE001
         return {
             "stage": WorkflowStage.FAILED,
-            "errors": list(state.errors) + [f"Curator failed: {e!s}"],
+            "errors": [f"Curator failed: {e!s}"],
         }

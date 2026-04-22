@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import operator
 import uuid
 from abc import ABC
 from datetime import datetime
@@ -219,10 +220,11 @@ class BaseHumanCommand(BaseModel, ABC):
 
     model_config = ConfigDict(extra="forbid")
 
+
     context_note: str | None = Field(
         default=None,
         description="Optional free-text note the reviewer can attach to any command.",
-    )
+    ) # Optional note to the human reviewer, ver si lo uso o lo saco despues
 
 
 class ApproveCommand(BaseHumanCommand):
@@ -391,11 +393,11 @@ class GraphState(BaseModel):
         default=None,
         description="Reporter output; None until the report is generated.",
     )
-    model_calls: list[ModelCallRecord] = Field(
+    model_calls: Annotated[list[ModelCallRecord], operator.add] = Field(
         default_factory=list,
         description="Append-only list of per-call usage rows from each agent node.",
     )
-    errors: list[str] = Field(
+    errors: Annotated[list[str], operator.add] = Field(
         default_factory=list,
         description="Soft errors or warnings surfaced to the user or a recovery path.",
     )
