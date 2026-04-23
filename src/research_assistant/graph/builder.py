@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
@@ -12,6 +13,33 @@ from research_assistant.agents.investigator import investigator_node
 from research_assistant.agents.reporter import reporter_node
 from research_assistant.core.state import GraphState
 from research_assistant.graph.nodes import human_review_node, route_after_node
+
+_GRAPH_STATE_MSGPACK_ALLOWLIST: tuple[tuple[str, ...], ...] = (
+    ("research_assistant.core.state", "WorkflowStage"),
+    ("research_assistant.core.state", "SubtopicStatus"),
+    ("research_assistant.core.state", "ResearchFindings"),
+    ("research_assistant.core.state", "TaskComplexity"),
+    ("research_assistant.core.state", "ModelCallRecord"),
+)
+
+
+def _configure_checkpointer_msgpack_allowlist(
+    checkpointer: BaseCheckpointSaver,
+) -> BaseCheckpointSaver:
+    """Ensure app state types are explicitly allowlisted for msgpack deserialization.
+
+    In permissive mode, `with_allowlist()` can be a no-op, so we force an explicit
+    JsonPlusSerializer allowlist in that case.
+    """
+    configured = checkpointer.with_allowlist(_GRAPH_STATE_MSGPACK_ALLOWLIST)
+    serde = getattr(configured, "serde", None)
+    if isinstance(serde, JsonPlusSerializer):
+        allowed_modules = getattr(serde, "_allowed_msgpack_modules", None)
+        if allowed_modules is True:
+            configured.serde = JsonPlusSerializer(
+                allowed_msgpack_modules=_GRAPH_STATE_MSGPACK_ALLOWLIST
+            )
+    return configured
 
 
 def build_graph(
@@ -35,6 +63,7 @@ def build_graph(
     """
     if checkpointer is None:
         checkpointer = InMemorySaver()
+    checkpointer = _configure_checkpointer_msgpack_allowlist(checkpointer)
 
     builder = StateGraph(GraphState)
 

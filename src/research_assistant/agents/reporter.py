@@ -14,6 +14,7 @@ from research_assistant.core.state import (
     GraphState,
     ReportSection,
     Source,
+    SubtopicStatus,
     TaskComplexity,
     WorkflowStage,
 )
@@ -59,9 +60,17 @@ def _curated_briefing(state: GraphState) -> str:
 
 
 def _union_references_from_validated(state: GraphState) -> list[Source]:
+    """Collect references only from subtopics that passed human validation.
+    
+    Excludes REJECTED and PENDING subtopics — they shouldn't appear in the
+    final report's reference list since the user didn't approve them.
+    """
     seen: set[str] = set()
     out: list[Source] = []
     for st in state.validated_subtopics:
+        # Only include sources from APPROVED or MODIFIED subtopics.
+        if st.status not in (SubtopicStatus.APPROVED, SubtopicStatus.MODIFIED):
+            continue
         for s in st.sources:
             if s.url not in seen:
                 seen.add(s.url)

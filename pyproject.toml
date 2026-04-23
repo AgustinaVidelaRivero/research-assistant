@@ -1,11 +1,20 @@
 [project]
 name = "research-assistant"
 version = "0.1.0"
-description = "Multi-agent research system with human-in-the-loop validation, built with LangGraph and Azure OpenAI"
+description = "Multi-agent research assistant with human-in-the-loop validation and cost optimization (LangGraph + Azure OpenAI)"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
+license = {text = "MIT"}
 authors = [
     { name = "Agustina Videla Rivero", email = "videlariveroa@gmail.com" }
+]
+keywords = ["llm", "langgraph", "multi-agent", "human-in-the-loop", "azure-openai"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
     "langgraph>=0.2.50",
@@ -27,6 +36,9 @@ dev = [
 
 [project.scripts]
 research-assistant = "research_assistant.cli:app"
+
+[project.urls]
+Repository = "https://github.com/AgustinaVidelaRivero/research-assistant"
 
 [build-system]
 requires = ["hatchling"]
