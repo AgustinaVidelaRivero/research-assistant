@@ -26,7 +26,7 @@ dev = [
 ]
 
 [project.scripts]
-research-assistant = "research_assistant.main:main"
+research-assistant = "research_assistant.cli:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -45,7 +45,9 @@ select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-m 'not integration'"
+# ROS/conda stacks register pytest plugins (launch_testing, launch_ros) that assume each
+# other and/or old pytest APIs. This project is plain Python; disable them for collection.
+addopts = "-m 'not integration' -p no:launch_testing -p no:launch_ros"
 markers = [
     "integration: marks tests that require live Azure credentials",
 ]
